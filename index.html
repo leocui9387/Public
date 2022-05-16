@@ -14619,7 +14619,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="INTRODUCTION---Investing-for-Anyone"><strong>INTRODUCTION - Investing for Anyone</strong><a class="anchor-link" href="#INTRODUCTION---Investing-for-Anyone">&#182;</a></h1><hr>
-<p>This is a tutorial on the basic process of designing a market trading algorithm and testing it. The specific topic that is used to demostrate the design and testing of a market trading algorithm is the question of whether or not the Dollar Cost Averaging strategy can be beaten by Buy the Bottom Strategy when applied to investing in the S&amp;P 500. The intention is to find a simple algorithm for anyone to use without any financial knowledge required. As such, the analytical tools that will be incorporated will be sparse, but the overall method can still be applied.</p>
+<p>This is a tutorial on the basic process of designing a market trading algorithm and testing it. The specific topic that is used to demostrate the design and testing of a market trading algorithm is the question of whether or not the Dollar Cost Averaging strategy can be beaten by Buy the Bottom Strategy when applied to investing in the S&amp;P 500. The intention is to find a simple algorithm for anyone to use without any financial knowledge required. As such, the analytical tools that will be incorporated will be sparse, but the overall method can still be applied generally.</p>
 <p>Dollar Cost Averaging(DCA) takes the idea of a monthly budget and applies it to investing in the stock market. Every month, a set amount of money is used to purchase shares of stocks. This idea came to prominence when John Bogle pioneered index funds and passive investments.</p>
 <p>The Buy the Bottom(BtB) strategy was inspired by an interview with Mark Cuban where he proposed that investors should just save money and buy when there's a crash. This is significantly less stressful but also requires financial expertise. But the real question is, does BtB produce greater returns than DCA?</p>
 <p>From an investor perspective, it is very difficult to beat the market. It requires having an advantage on some of the biggest corporations with some of the hardest working people in the USA. As such, the average retail investor will typically be unable to beat the market, so investing in the S&amp;P 500 is the best default option. When there does exist some advantage, it is encumbant upon the investor to act by moving funds from the S&amp;P 500 to the alternative with a higher perceived value in the future. This is the best strategy for everyday people and is what great investors advise.</p>
@@ -14824,7 +14824,10 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <hr>
 <h3 id="Business-Cycle-Data">Business Cycle Data<a class="anchor-link" href="#Business-Cycle-Data">&#182;</a></h3><p>The economic business cycle is a good indicator/substitute for identifiying peaks and troughs. Though the stock market is a little more prospective than economic indicators, business cycle dates will help identify peaks and troughs to help with the BtB strategy.The National Bureau of Economic Research (NBER) maintains this data.</p>
 <p><strong>Useful Links:</strong></p>
-<h2 id="--https://fredhelp.stlouisfed.org/fred/data/understanding-the-data/recession-bars/">- <a href="https://fredhelp.stlouisfed.org/fred/data/understanding-the-data/recession-bars/">https://fredhelp.stlouisfed.org/fred/data/understanding-the-data/recession-bars/</a><a class="anchor-link" href="#--https://fredhelp.stlouisfed.org/fred/data/understanding-the-data/recession-bars/">&#182;</a></h2>
+<ul>
+<li><a href="https://fredhelp.stlouisfed.org/fred/data/understanding-the-data/recession-bars/">https://fredhelp.stlouisfed.org/fred/data/understanding-the-data/recession-bars/</a></li>
+</ul>
+
 </div>
 </div>
 </div>
@@ -14896,7 +14899,10 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <p>For the BtB strategy, the troughs will serve as a trigger to purchase stocks.</p>
 <p>The Zig Zag algorithm is complex. An implementation was found from Stack Overflow and integrated into this workbook.</p>
 <p><strong>Useful Links:</strong></p>
-<h2 id="--https://stackoverflow.com/questions/65800877/python-zig-zag-algorithm-function-not-returning-expected-results">- <a href="https://stackoverflow.com/questions/65800877/python-zig-zag-algorithm-function-not-returning-expected-results">https://stackoverflow.com/questions/65800877/python-zig-zag-algorithm-function-not-returning-expected-results</a><a class="anchor-link" href="#--https://stackoverflow.com/questions/65800877/python-zig-zag-algorithm-function-not-returning-expected-results">&#182;</a></h2>
+<ul>
+<li><a href="https://stackoverflow.com/questions/65800877/python-zig-zag-algorithm-function-not-returning-expected-results">https://stackoverflow.com/questions/65800877/python-zig-zag-algorithm-function-not-returning-expected-results</a></li>
+</ul>
+
 </div>
 </div>
 </div>
@@ -16626,7 +16632,7 @@ jp-needs-light-background
 <h4 id="Check-Mark-Strategy---Review">Check Mark Strategy - Review<a class="anchor-link" href="#Check-Mark-Strategy---Review">&#182;</a></h4><p>The pattern looks like a BtB with a trail afterwards. Although there's a chance that there's significant overfitting of the drop threshold, the relevant data set is too limited to do much more and 27% does seem to generalize from pre-90s to post-90s crashes. The 90s were the only time 27% failed, however, that was a unique situation that savy investors would have recognized. Therefore, I would conclude that 27% is actually a very important market indicator for the S&amp;P500.</p>
 <p>This implementation of the Check Mark strategy, apppears to have two major issues: prolonged bear markets and prolonged bull markets. Check Mark avoids a significant amount of the gains from the 90s bull market and also gets back in afterward, in the prolonged bear market of the early 2000s. After the real estate crash of 2009, the strategy also avoids all the gains from the bull market of the 2010s.</p>
 <p>Of the two issues, avoiding the prolonged bull markets is the most damning. The 90s were a unique time and can be ignored as an outlier, but the post 2009 boom shows the that prolonged bull markets are a real thing, which may be caused by better economic policy(another source of endogeneity). As the graph is on a logarithmic scale, significant increases are actually exponential increases, and prolonged bull markets are where the market moves into another "order of magnitude". The logarithmic scale can be removed to view the full extent of the missed gains.</p>
-<p>In a bid to avoid bear markets, which the 27% threshold seems to does well in identifying, we cut short the major bull runs, which causes the Check Mark strategy to lag behind DCA even worse than BtB.</p>
+<p>In a bid to avoid bear markets, which the 27% threshold seems to do well in identifying, we cut short the major bull runs, which causes the Check Mark strategy to lag behind DCA even worse than BtB.</p>
 
 </div>
 </div>
