@@ -14767,12 +14767,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># CPI - two part function </span>
-<span class="c1"># 1) initial load that also saves the data to a file and return data</span>
-<span class="c1"># 2) if file exists, then just update the file and return updated data</span>
-
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># CPI - try to run once because there is a daily limit that&#39;s easily hit.</span>
 <span class="k">def</span> <span class="nf">CPIU_Getter</span><span class="p">(</span> <span class="n">beg_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">force_download</span> <span class="o">=</span> <span class="kc">False</span> <span class="p">):</span>
-    <span class="c1"># function to get 10 years of CPI data</span>
     <span class="k">def</span> <span class="nf">bls_looper</span> <span class="p">(</span><span class="n">start_year</span><span class="p">):</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">}</span> 
         
@@ -14790,12 +14786,11 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
         <span class="k">return</span> <span class="n">tdf</span>
 
-    <span class="n">cpi_file_name</span> <span class="o">=</span> <span class="s2">&quot;cpi_final_c4.csv&quot;</span>
-    <span class="n">raw_drop_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;periodName&quot;</span><span class="p">,</span><span class="s2">&quot;period&quot;</span><span class="p">,</span><span class="s2">&quot;footnotes&quot;</span><span class="p">]</span>
+    <span class="n">cpi_file_name</span> <span class="o">=</span> <span class="s2">&quot;cpi_final_c3.csv&quot;</span>
     
-    <span class="c1"># initial file load</span>
     <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cpi_file_name</span><span class="p">)</span> <span class="ow">or</span> <span class="n">force_download</span><span class="p">):</span>
-        <span class="c1"># BLS only lets you download 10 years at a time, so looping is needed</span>
+        
+        <span class="c1"># BLS only lets you download 10 years at a time</span>
         <span class="n">acc</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">beg_year</span><span class="p">,</span> <span class="n">end_year</span> <span class="o">+</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
             
@@ -14804,31 +14799,13 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
                 <span class="n">acc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
 
         <span class="n">full</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">acc</span><span class="p">)</span>
-        <span class="n">full</span> <span class="o">=</span> <span class="n">full</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">raw_drop_cols</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">&quot;year&quot;</span><span class="p">,</span><span class="s2">&quot;month&quot;</span><span class="p">])</span>
-        
-        <span class="c1"># saves the file to avoid bandwidth limit</span>
+        <span class="n">full</span> <span class="o">=</span> <span class="n">full</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;periodName&quot;</span><span class="p">,</span><span class="s2">&quot;period&quot;</span><span class="p">,</span><span class="s2">&quot;footnotes&quot;</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">&quot;year&quot;</span><span class="p">,</span><span class="s2">&quot;month&quot;</span><span class="p">])</span>
         <span class="n">full</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">cpi_file_name</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">dl_df</span> <span class="o">=</span> <span class="n">full</span>
         
     <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># update CPI data file</span>
         <span class="n">dl_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">cpi_file_name</span><span class="p">)</span>
-        <span class="n">max_yr</span> <span class="o">=</span> <span class="n">dl_df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-        <span class="n">max_month</span> <span class="o">=</span> <span class="n">dl_df</span><span class="p">[</span><span class="n">dl_df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">max_yr</span><span class="p">][</span><span class="s2">&quot;month&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-        
-        <span class="k">if</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">max_yr</span><span class="p">,</span> <span class="n">max_month</span><span class="p">,</span><span class="mi">10</span><span class="p">):</span>
-            <span class="n">dl_yr</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_yr</span> <span class="k">if</span> <span class="n">max_month</span> <span class="o">!=</span> <span class="mi">12</span> <span class="k">else</span> <span class="n">max_yr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">new_df</span> <span class="o">=</span> <span class="n">bls_looper</span><span class="p">(</span><span class="n">dl_yr</span><span class="p">)</span>
-            
-            <span class="k">if</span> <span class="n">max_month</span> <span class="o">!=</span> <span class="mi">12</span><span class="p">:</span>
-                <span class="n">new_df</span> <span class="o">=</span> <span class="n">new_df</span><span class="p">[(</span><span class="n">new_df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">max_yr</span><span class="p">)</span> 
-                                <span class="o">|</span> <span class="p">((</span><span class="n">new_df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">max_yr</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">new_df</span><span class="p">[</span><span class="s2">&quot;month&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">max_month</span><span class="p">))]</span>
-            
-            <span class="n">dl_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">dl_df</span><span class="p">,</span><span class="n">new_df</span><span class="p">])</span>
-            <span class="n">raw_drop_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;latest&quot;</span><span class="p">)</span>
-            <span class="n">dl_df</span> <span class="o">=</span> <span class="n">dl_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">raw_drop_cols</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">&quot;year&quot;</span><span class="p">,</span><span class="s2">&quot;month&quot;</span><span class="p">])</span>
-            <span class="n">dl_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">cpi_file_name</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            
+
     <span class="k">return</span> <span class="n">dl_df</span>
 </pre></div>
 
@@ -15832,61 +15809,6 @@ Bear Market Life:  512.0 days,  1.4222222222222223  years
 </div>
 </div>
 
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># CPI - try to run once because there is a daily limit that&#39;s easily hit.</span>
-<span class="k">def</span> <span class="nf">CPIU_Getter</span><span class="p">(</span> <span class="n">beg_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">force_download</span> <span class="o">=</span> <span class="kc">False</span> <span class="p">):</span>
-    <span class="k">def</span> <span class="nf">bls_looper</span> <span class="p">(</span><span class="n">start_year</span><span class="p">):</span>
-        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">}</span> 
-        
-        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;seriesid&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;CUUR0000SA0&quot;</span><span class="p">],</span>
-                           <span class="s2">&quot;startyear&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">start_year</span><span class="p">),</span> 
-                           <span class="s2">&quot;endyear&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">start_year</span> <span class="o">+</span> <span class="mi">10</span><span class="p">)})</span>
-
-        <span class="n">p</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;https://api.bls.gov/publicAPI/v2/timeseries/data/&#39;</span><span class="p">,</span> 
-                          <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
-
-        <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="p">)[</span><span class="s1">&#39;Results&#39;</span><span class="p">][</span><span class="s1">&#39;series&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
-        <span class="n">tdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span>
-        <span class="n">tdf</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tdf</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-        <span class="n">tdf</span><span class="p">[</span><span class="s2">&quot;month&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tdf</span><span class="p">[</span><span class="s2">&quot;period&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
-
-        <span class="k">return</span> <span class="n">tdf</span>
-
-    <span class="n">cpi_file_name</span> <span class="o">=</span> <span class="s2">&quot;cpi_final_c3.csv&quot;</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cpi_file_name</span><span class="p">)</span> <span class="ow">or</span> <span class="n">force_download</span><span class="p">):</span>
-        
-        <span class="c1"># BLS only lets you download 10 years at a time</span>
-        <span class="n">acc</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">beg_year</span><span class="p">,</span> <span class="n">end_year</span> <span class="o">+</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
-            
-            <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">year</span> <span class="p">:</span> 
-                <span class="n">tmp</span> <span class="o">=</span> <span class="n">bls_looper</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-                <span class="n">acc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
-
-        <span class="n">full</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">acc</span><span class="p">)</span>
-        <span class="n">full</span> <span class="o">=</span> <span class="n">full</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;periodName&quot;</span><span class="p">,</span><span class="s2">&quot;period&quot;</span><span class="p">,</span><span class="s2">&quot;footnotes&quot;</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">&quot;year&quot;</span><span class="p">,</span><span class="s2">&quot;month&quot;</span><span class="p">])</span>
-        <span class="n">full</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">cpi_file_name</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">dl_df</span> <span class="o">=</span> <span class="n">full</span>
-        
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">dl_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">cpi_file_name</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">dl_df</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
@@ -16733,6 +16655,249 @@ jp-needs-light-background
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="Bonus-Material---To-Drive-Interest-Only"><strong>Bonus Material - To Drive Interest Only</strong><a class="anchor-link" href="#Bonus-Material---To-Drive-Interest-Only">&#182;</a></h1>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Helpful FFR code</span>
+<span class="k">def</span> <span class="nf">get_fed_funds_rates</span><span class="p">():</span>
+    <span class="n">save_file_name</span> <span class="o">=</span> <span class="s2">&quot;fedfunds.csv&quot;</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">save_file_name</span><span class="p">)):</span>
+        <span class="n">FRED_API_KEY</span> <span class="o">=</span> <span class="s2">&quot;get ur own&quot;</span> <span class="c1"># you need your own key by registering with FRED</span>
+        <span class="n">param</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">param</span><span class="p">[</span><span class="s2">&quot;api_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">FRED_API_KEY</span>
+        <span class="n">param</span><span class="p">[</span><span class="s2">&quot;file_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span>
+
+        <span class="n">FRED_URL</span> <span class="o">=</span> <span class="s2">&quot;https://api.stlouisfed.org/fred/series/observations&quot;</span> 
+
+        <span class="n">param</span><span class="p">[</span><span class="s2">&quot;series_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;FEDFUNDS&quot;</span>
+        
+        <span class="n">me</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">fred</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FRED_URL</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">param</span><span class="p">)</span>
+        <span class="n">jfred</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">fred</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="n">dfred</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">jfred</span><span class="p">[</span><span class="s2">&quot;observations&quot;</span><span class="p">])</span>
+        <span class="n">dfred</span> <span class="o">=</span> <span class="n">dfred</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;realtime_start&quot;</span><span class="p">,</span><span class="s2">&quot;realtime_end&quot;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;date&quot;</span><span class="p">)</span>
+        
+        <span class="n">dfred</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">save_file_name</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">dfred</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">temp_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">save_file_name</span><span class="p">)</span>
+        
+        <span class="n">temp_df</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">temp_df</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">])</span>
+        
+        <span class="k">return</span> <span class="n">temp_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;date&quot;</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<hr>
+<h1 id="Further-Investigation---Perfect-Timing">Further Investigation - Perfect Timing<a class="anchor-link" href="#Further-Investigation---Perfect-Timing">&#182;</a></h1><ul>
+<li>Sell All at Peak</li>
+<li>All-In at Trough</li>
+<li>Include Taxes</li>
+<li>Buy only during Bull markets</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[32]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">perfect_timing_strategy</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">tax</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">):</span>
+    
+    <span class="n">pivots</span> <span class="o">=</span> <span class="n">get_zig_zag_pivots</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">closure</span> <span class="p">(</span><span class="n">df</span><span class="p">):</span>
+        <span class="n">peak_datez</span> <span class="o">=</span> <span class="n">pivots</span><span class="p">[</span><span class="n">pivots</span><span class="p">[</span><span class="s2">&quot;Pivots&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">][</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">trough_datez</span> <span class="o">=</span> <span class="n">pivots</span><span class="p">[</span><span class="n">pivots</span><span class="p">[</span><span class="s2">&quot;Pivots&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;purchase_price&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;High&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Low&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Close&quot;</span><span class="p">])</span><span class="o">/</span><span class="mi">4</span>
+        
+        <span class="n">savings_balance</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">shares_balance</span> <span class="o">=</span> <span class="mi">0</span>
+        
+    
+        <span class="k">if</span> <span class="n">pivots</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;Pivots&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="p">:</span>
+            <span class="n">bear_market</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bear_market</span> <span class="o">=</span> <span class="kc">True</span>
+            
+        <span class="n">basis</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">bear_market</span><span class="p">:</span>
+                <span class="k">assert</span><span class="p">(</span><span class="n">savings_balance</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+            
+            <span class="n">savings_balance</span> <span class="o">=</span> <span class="n">savings_balance</span> <span class="o">+</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;funding&quot;</span><span class="p">]</span>
+            
+            <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">trough_datez</span><span class="p">:</span>
+                <span class="k">assert</span><span class="p">(</span><span class="n">shares_balance</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+                
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;purchased_shares&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">savings_balance</span><span class="o">/</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;purchase_price&quot;</span><span class="p">]</span>
+                <span class="n">shares_balance</span> <span class="o">=</span> <span class="n">savings_balance</span><span class="o">/</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;purchase_price&quot;</span><span class="p">]</span>
+                
+                <span class="n">basis</span> <span class="o">=</span> <span class="n">savings_balance</span>
+                
+                <span class="n">savings_balance</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;savings_balance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">savings_balance</span>
+                <span class="n">bear_market</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">elif</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">peak_datez</span><span class="p">:</span>
+                
+                <span class="n">gains</span> <span class="o">=</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;purchase_price&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">shares_balance</span> <span class="o">-</span> <span class="n">basis</span><span class="p">)</span>  
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;gains&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gains</span>
+                
+                <span class="k">if</span> <span class="n">gains</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">:</span>
+                    <span class="n">net_gains</span> <span class="o">=</span> <span class="n">gains</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">tax</span><span class="p">)</span>
+                    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;taxes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gains</span> <span class="o">-</span> <span class="n">net_gains</span>
+                    <span class="n">savings_balance</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;funding&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">net_gains</span> <span class="o">+</span> <span class="n">basis</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">savings_balance</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;funding&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;purchase_price&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">shares_balance</span>
+                    
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;savings_balance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">savings_balance</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;purchased_shares&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">shares_balance</span>
+                <span class="n">basis</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">shares_balance</span> <span class="o">=</span> <span class="mi">0</span>
+                
+                <span class="n">bear_market</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">bear_market</span><span class="p">:</span>
+                <span class="n">shares_balance</span> <span class="o">=</span> <span class="n">shares_balance</span> <span class="o">+</span> <span class="n">savings_balance</span><span class="o">/</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;purchase_price&quot;</span><span class="p">]</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;purchased_shares&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">savings_balance</span><span class="o">/</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;purchase_price&quot;</span><span class="p">]</span>
+                <span class="n">basis</span> <span class="o">=</span> <span class="n">basis</span> <span class="o">+</span> <span class="n">savings_balance</span>
+                <span class="n">savings_balance</span> <span class="o">=</span> <span class="mi">0</span>
+                
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;tax_basis&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">basis</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;savings_balance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">savings_balance</span>
+        
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;total_shares&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;purchased_shares&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;total_shares&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;total_shares&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;total_value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;total_shares&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Close&quot;</span><span class="p">]</span> <span class="o">+</span>  <span class="n">df</span><span class="p">[</span><span class="s2">&quot;savings_balance&quot;</span><span class="p">]</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;total_value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;total_value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;pct_return&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;total_value&quot;</span><span class="p">]</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;total_invested&quot;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>   
+        
+        <span class="k">return</span> <span class="n">df</span>
+        
+    <span class="k">return</span> <span class="n">closure</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[33]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sp_copy</span> <span class="o">=</span> <span class="n">raw_sp</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">funding</span> <span class="o">=</span> <span class="n">dca_funding</span><span class="p">(</span><span class="n">cpi</span> <span class="o">=</span> <span class="n">cpi_df</span><span class="p">)</span>
+<span class="n">perfect_strategy</span> <span class="o">=</span> <span class="n">perfect_timing_strategy</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="n">tmp</span> <span class="o">=</span> <span class="n">backtester</span><span class="p">(</span><span class="n">sp_copy</span><span class="p">,</span> <span class="n">funding</span><span class="p">,</span> <span class="n">perfect_strategy</span><span class="p">)</span>
+<span class="n">tmp</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">tmp</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="s2">&quot;purchased_shares&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># keep last row to get current return</span>
+<span class="n">tmp</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;purchased_shares&quot;</span><span class="p">])</span>
+<span class="n">tmp</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;purchased_shares&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">]</span>
+<span class="n">tmp</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">tmp</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="s2">&quot;purchased_shares&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">tmp</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Calculating Pivots for  25.0 %
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[33]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>Date                2022-05-16 00:00:00
+Open                         4013.02002
+High                        4027.360107
+Low                          3983.98999
+Close                       4018.429932
+Adj_Close                   4018.429932
+Volume                       1121509000
+latest                              NaN
+funding                             0.0
+total_invested                258073.66
+purchase_price               4012.05249
+purchased_shares                    0.0
+savings_balance         12969088.194349
+tax_basis                           0.0
+gains                    6267530.826659
+taxes                    1253506.165332
+total_shares                        0.0
+total_value                 12969088.19
+pct_return                  4925.343613
+Name: 13210, dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 </div>
 </body>
 
